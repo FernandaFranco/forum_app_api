@@ -50,15 +50,15 @@ def add_topico(form: TopicoSchema):
 
     except IntegrityError as e:
         # como a duplicidade do titulo é a provável razão do IntegrityError
-        error_msg = "Topico de mesmo titulo já salvo na base :/"
+        error_msg = "Tópico de mesmo título já existe!"
         logger.warning(f"Erro ao adicionar topico '{topico.titulo}', {error_msg}")
-        return {"mesage": error_msg}, 409
+        return {"message": error_msg}, 409
 
     except Exception as e:
         # caso um erro fora do previsto
         error_msg = "Não foi possível salvar novo item :/"
         logger.warning(f"Erro ao adicionar topico '{topico.titulo}', {error_msg}")
-        return {"mesage": error_msg}, 400
+        return {"message": error_msg}, 400
 
 
 @app.get('/topicos', tags=[topico_tag],
@@ -102,9 +102,9 @@ def get_topico(query: TopicoBuscaSchema):
         # se o topico não foi encontrado
         error_msg = "Topico não encontrado na base :/"
         logger.warning(f"Erro ao buscar topico '{topico_titulo}', {error_msg}")
-        return {"mesage": error_msg}, 404
+        return {"message": error_msg}, 404
     else:
-        logger.debug(f"Topico econtrado: '{topico.titulo}'")
+        logger.debug(f"Topico encontrado: '{topico.titulo}'")
         # retorna a representação de topico
         return apresenta_topico(topico), 200
 
@@ -128,12 +128,12 @@ def del_topico(query: TopicoBuscaSchema):
     if count:
         # retorna a representação da mensagem de confirmação
         logger.debug(f"Deletado topico #{topico_titulo}")
-        return {"mesage": "Topico removido", "id": topico_titulo}
+        return {"message": "Topico removido", "id": topico_titulo}
     else:
         # se o topico não foi encontrado
         error_msg = "Topico não encontrado na base :/"
         logger.warning(f"Erro ao deletar topico #'{topico_titulo}', {error_msg}")
-        return {"mesage": error_msg}, 404
+        return {"message": error_msg}, 404
 
 
 @app.post('/cometario', tags=[comentario_tag],
@@ -154,7 +154,7 @@ def add_comentario(form: ComentarioSchema):
         # se topico não encontrado
         error_msg = "Topico não encontrado na base :/"
         logger.warning(f"Erro ao adicionar comentário ao topico '{topico_id}', {error_msg}")
-        return {"mesage": error_msg}, 404
+        return {"message": error_msg}, 404
 
     # criando o comentário
     texto = form.texto

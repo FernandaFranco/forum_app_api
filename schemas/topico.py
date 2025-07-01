@@ -56,7 +56,7 @@ class TopicoDelSchema(BaseModel):
     """ Define como deve ser a estrutura do dado retornado após uma requisição
         de remoção.
     """
-    mesage: str
+    message: str
     titulo: str
 
 def apresenta_topico(topico: Topico):
