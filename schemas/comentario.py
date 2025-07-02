@@ -6,3 +6,4 @@ class ComentarioSchema(BaseModel):
     """
     topico_id: int = 1
     texto: str = "Dá um Google!"
+    username: str = "mestre_dos_mares"

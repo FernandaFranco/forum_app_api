@@ -87,7 +87,7 @@ def get_topicos():
 @app.get('/topico', tags=[topico_tag],
          responses={"200": TopicoViewSchema, "404": ErrorSchema})
 def get_topico(query: TopicoBuscaSchema):
-    """Faz a busca por um Topico a partir do id do topico
+    """Faz a busca por um tópico a partir do título do topico
 
     Retorna uma representação dos topicos e comentários associados.
     """
@@ -136,12 +136,12 @@ def del_topico(query: TopicoBuscaSchema):
         return {"message": error_msg}, 404
 
 
-@app.post('/cometario', tags=[comentario_tag],
+@app.post('/comentario', tags=[comentario_tag],
           responses={"200": TopicoViewSchema, "404": ErrorSchema})
 def add_comentario(form: ComentarioSchema):
-    """Adiciona de um novo comentário à um topicos cadastrado na base identificado pelo id
+    """Adiciona um novo comentário à um topicos cadastrado na base identificado pelo id
 
-    Retorna uma representação dos topicos e comentários associados.
+    Retorna uma representação dos tópicos e comentários associados.
     """
     topico_id  = form.topico_id
     logger.debug(f"Adicionando comentários ao topico #{topico_id}")
@@ -158,7 +158,8 @@ def add_comentario(form: ComentarioSchema):
 
     # criando o comentário
     texto = form.texto
-    comentario = Comentario(texto)
+    username = form.username
+    comentario = Comentario(texto, username)
 
     # adicionando o comentário ao topico
     topico.adiciona_comentario(comentario)
