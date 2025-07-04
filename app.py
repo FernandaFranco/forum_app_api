@@ -9,7 +9,7 @@ from logger import logger
 from schemas import *
 from flask_cors import CORS
 
-info = Info(title="Forum API", version="1.0.0")
+info = Info(title="Discuta! API", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
 
@@ -51,7 +51,7 @@ def add_topico(form: TopicoSchema):
     except IntegrityError as e:
         # como a duplicidade do titulo é a provável razão do IntegrityError
         error_msg = "Tópico de mesmo título já existe!"
-        logger.warning(f"Erro ao adicionar topico '{topico.titulo}', {error_msg}")
+        logger.warning(f"Erro ao adicionar tópico '{topico.titulo}', {error_msg}")
         return {"message": error_msg}, 409
 
     except Exception as e:
@@ -64,7 +64,7 @@ def add_topico(form: TopicoSchema):
 @app.get('/topicos', tags=[topico_tag],
          responses={"200": ListagemTopicosSchema, "404": ErrorSchema})
 def get_topicos():
-    """Faz a busca por todos os Topico cadastrados
+    """Faz a busca por todos os Tópicos cadastrados
 
     Retorna uma representação da listagem de topicos.
     """
@@ -89,7 +89,7 @@ def get_topicos():
 def get_topico(query: TopicoBuscaSchema):
     """Faz a busca por um tópico a partir do título do topico
 
-    Retorna uma representação dos topicos e comentários associados.
+    Retorna uma representação dos tópicos e comentários associados.
     """
     topico_titulo = query.titulo
     logger.debug(f"Coletando dados sobre topico #{topico_titulo}")
@@ -107,34 +107,6 @@ def get_topico(query: TopicoBuscaSchema):
         logger.debug(f"Topico encontrado: '{topico.titulo}'")
         # retorna a representação de topico
         return apresenta_topico(topico), 200
-
-
-@app.delete('/topico', tags=[topico_tag],
-            responses={"200": TopicoDelSchema, "404": ErrorSchema})
-def del_topico(query: TopicoBuscaSchema):
-    """Deleta um Topico a partir do titulo de topico informado
-
-    Retorna uma mensagem de confirmação da remoção.
-    """
-    topico_titulo = unquote(unquote(query.titulo))
-    print(topico_titulo)
-    logger.debug(f"Deletando dados sobre topico #{topico_titulo}")
-    # criando conexão com a base
-    session = Session()
-    # fazendo a remoção
-    count = session.query(Topico).filter(Topico.titulo == topico_titulo).delete()
-    session.commit()
-
-    if count:
-        # retorna a representação da mensagem de confirmação
-        logger.debug(f"Deletado topico #{topico_titulo}")
-        return {"message": "Topico removido", "id": topico_titulo}
-    else:
-        # se o topico não foi encontrado
-        error_msg = "Topico não encontrado na base :/"
-        logger.warning(f"Erro ao deletar topico #'{topico_titulo}', {error_msg}")
-        return {"message": error_msg}, 404
-
 
 @app.post('/comentario', tags=[comentario_tag],
           responses={"200": TopicoViewSchema, "404": ErrorSchema})
