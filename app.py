@@ -15,8 +15,8 @@ CORS(app)
 
 # definindo tags
 home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
-topico_tag = Tag(name="Topico", description="Adição, visualização e remoção de topicos à base")
-comentario_tag = Tag(name="Comentario", description="Adição de um comentário à um topico cadastrado na base")
+topico_tag = Tag(name="Tópico", description="Adição, visualização e remoção de tópicos à base")
+comentario_tag = Tag(name="Comentário", description="Adição de um comentário à um tópico cadastrado na base")
 
 
 @app.get('/', tags=[home_tag])
@@ -29,46 +29,46 @@ def home():
 @app.post('/topico', tags=[topico_tag],
           responses={"200": TopicoViewSchema, "409": ErrorSchema, "400": ErrorSchema})
 def add_topico(form: TopicoSchema):
-    """Adiciona um novo Topico à base de dados
+    """Adiciona um novo Tópico à base de dados
 
-    Retorna uma representação dos topicos e comentários associados.
+    Retorna uma representação dos tópicos e comentários associados.
     """
     topico = Topico(
         titulo=form.titulo,
         texto=form.texto,
         username=form.username)
-    logger.debug(f"Adicionando topico de titulo: '{topico.titulo}'")
+    logger.debug(f"Adicionando tópico de titulo: '{topico.titulo}'")
     try:
         # criando conexão com a base
         session = Session()
         # adicionando topico
         session.add(topico)
-        # efetivando o camando de adição de novo item na tabela
+        # efetivando a adição de novo tópico na tabela
         session.commit()
         logger.debug(f"Adicionado topico de titulo: '{topico.titulo}'")
         return apresenta_topico(topico), 200
 
     except IntegrityError as e:
-        # como a duplicidade do titulo é a provável razão do IntegrityError
+        # a duplicidade do titulo é a provável razão do IntegrityError
         error_msg = "Tópico de mesmo título já existe!"
         logger.warning(f"Erro ao adicionar tópico '{topico.titulo}', {error_msg}")
         return {"message": error_msg}, 409
 
     except Exception as e:
         # caso um erro fora do previsto
-        error_msg = "Não foi possível salvar novo item :/"
-        logger.warning(f"Erro ao adicionar topico '{topico.titulo}', {error_msg}")
+        error_msg = "Não foi possível salvar novo tópico"
+        logger.warning(f"Erro ao adicionar tópico '{topico.titulo}', {error_msg}")
         return {"message": error_msg}, 400
 
 
 @app.get('/topicos', tags=[topico_tag],
          responses={"200": ListagemTopicosSchema, "404": ErrorSchema})
 def get_topicos():
-    """Faz a busca por todos os Tópicos cadastrados
+    """Faz a busca por todos os tópicos cadastrados
 
-    Retorna uma representação da listagem de topicos.
+    Retorna uma representação da listagem de tópicos.
     """
-    logger.debug(f"Coletando topicos ")
+    logger.debug(f"Coletando tópicos ")
     # criando conexão com a base
     session = Session()
     # fazendo a busca
@@ -87,7 +87,7 @@ def get_topicos():
 @app.get('/topico', tags=[topico_tag],
          responses={"200": TopicoViewSchema, "404": ErrorSchema})
 def get_topico(query: TopicoBuscaSchema):
-    """Faz a busca por um tópico a partir do título do topico
+    """Faz a busca por um tópico a partir do título do tópico
 
     Retorna uma representação dos tópicos e comentários associados.
     """

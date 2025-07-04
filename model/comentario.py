@@ -9,7 +9,7 @@ class Comentario(Base):
     __tablename__ = 'comentario'
 
     id = Column(Integer, primary_key=True)
-    texto = Column(String(4000))
+    texto = Column(String(3000))
     username = Column(String(20))
     data_insercao = Column(DateTime, default=datetime.now())
 
