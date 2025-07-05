@@ -28,21 +28,22 @@ class ListagemTopicosSchema(BaseModel):
 
 def apresenta_topicos(topicos: List[Topico]):
     """ Retorna uma representação do topico seguindo o schema definido em
-        TopicoViewSchema.
+        TopicoSchema.
     """
     result = []
     for topico in topicos:
         result.append({
+            "id": topico.id,
             "titulo": topico.titulo,
-            "texto": topico.texto,
             "username": topico.username,
+            "total_comentarios": len(topico.comentarios)
         })
 
     return {"topicos": result}
 
 
 class TopicoViewSchema(BaseModel):
-    """ Define como um topico será retornado: topico + comentários.
+    """ Define como um topico será visualizado: topico + comentários.
     """
     id: int = 1
     titulo: str = "Dúvida sobre sqlite"
@@ -51,13 +52,6 @@ class TopicoViewSchema(BaseModel):
     total_comentarios: int = 1
     comentarios:List[ComentarioSchema]
 
-
-class TopicoDelSchema(BaseModel):
-    """ Define como deve ser a estrutura do dado retornado após uma requisição
-        de remoção.
-    """
-    message: str
-    titulo: str
 
 def apresenta_topico(topico: Topico):
     """ Retorna uma representação do topico seguindo o schema definido em
@@ -69,5 +63,5 @@ def apresenta_topico(topico: Topico):
         "texto": topico.texto,
         "username": topico.username,
         "total_comentarios": len(topico.comentarios),
-        "comentarios": [{"texto": c.texto} for c in topico.comentarios]
+        "comentarios": [{"texto": c.texto, "username": c.username} for c in topico.comentarios]
     }
