@@ -4,7 +4,7 @@ Um simples Discussion Forum app implementado em Flask!
 
 ## Como executar
 
-Clonar o repositório e nstalar as dependências descritas no arquivo requirements.txt:
+Clonar o repositório e instalar as dependências descritas no arquivo requirements.txt:
 
 ```console
 pip install -r requirements.txt
