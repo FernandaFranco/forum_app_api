@@ -4,7 +4,15 @@ Um simples Discussion Forum app implementado em Flask!
 
 ## Como executar
 
-Clonar o repositório e instalar as dependências descritas no arquivo requirements.txt:
+Após clonar o repositório, criar e ativar um ambiente virtual para o projeto:
+
+```console
+# exemplo em bash/zsh
+python -m venv .venv
+source .venv/bin/activate 
+```
+
+Instalar as dependências descritas no arquivo requirements.txt:
 
 ```console
 pip install -r requirements.txt
