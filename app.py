@@ -3,9 +3,10 @@ from flask import redirect
 
 from sqlalchemy.exc import IntegrityError
 
+from flask_cors import CORS
+
 from model import Session, Topico, Comentario
 from schemas import *
-from flask_cors import CORS
 
 info = Info(title="Discuta! API", version="1.0.0")
 app = OpenAPI(__name__, info=info)
