@@ -13,10 +13,7 @@ class Comentario(Base):
     username = Column(String(20))
     data_insercao = Column(DateTime, default=datetime.now())
 
-    # Definição do relacionamento entre o comentário e um topico.
-    # Aqui está sendo definido a coluna 'topico' que vai guardar
-    # a referencia ao topico, a chave estrangeira que relaciona
-    # um topico ao comentário.
+    # Definição do relacionamento entre o comentário e seu tópico.
     topico = Column(Integer, ForeignKey("topico.pk_topico"), nullable=False)
 
     def __init__(self, texto:str, username:str, data_insercao:Union[DateTime, None] = None):

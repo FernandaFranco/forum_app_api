@@ -15,10 +15,7 @@ class Topico(Base):
     username = Column(String(20))
     data_insercao = Column(DateTime, default=datetime.now())
 
-    # Definição do relacionamento entre o topico e o comentário.
-    # Essa relação é implicita, não está salva na tabela 'topico',
-    # mas aqui estou deixando para SQLAlchemy a responsabilidade
-    # de reconstruir esse relacionamento.
+    # Definição do relacionamento entre o topico e seus comentários.
     comentarios = relationship("Comentario")
 
     def __init__(self, titulo:str, texto:str, username:str,
@@ -28,15 +25,14 @@ class Topico(Base):
 
         Arguments:
             titulo: título do tópico.
-            texto: texto do corpo do tópico
-            username: username do criador do tópico
-            data_insercao: data de quando o tópico foi inserido à base
+            texto: texto do corpo do tópico.
+            username: username do criador do tópico.
+            data_insercao: data de quando o tópico foi inserido à base.
         """
         self.titulo = titulo
         self.texto = texto
         self.username = username
 
-        # se não for informada, será o data exata da inserção no banco
         if data_insercao:
             self.data_insercao = data_insercao
 
