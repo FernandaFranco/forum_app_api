@@ -1,11 +1,9 @@
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask import redirect
-from urllib.parse import unquote
 
 from sqlalchemy.exc import IntegrityError
 
 from model import Session, Topico, Comentario
-from logger import logger
 from schemas import *
 from flask_cors import CORS
 
@@ -15,7 +13,7 @@ CORS(app)
 
 # definindo tags
 home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
-topico_tag = Tag(name="Tópico", description="Adição, visualização e remoção de tópicos à base")
+topico_tag = Tag(name="Tópico", description="Adição ou visualização de tópicos à base")
 comentario_tag = Tag(name="Comentário", description="Adição de um comentário à um tópico cadastrado na base")
 
 
@@ -37,7 +35,6 @@ def add_topico(form: TopicoSchema):
         titulo=form.titulo,
         texto=form.texto,
         username=form.username)
-    logger.debug(f"Adicionando tópico de titulo: '{topico.titulo}'")
     try:
         # criando conexão com a base
         session = Session()
@@ -45,19 +42,16 @@ def add_topico(form: TopicoSchema):
         session.add(topico)
         # efetivando a adição de novo tópico na tabela
         session.commit()
-        logger.debug(f"Adicionado topico de titulo: '{topico.titulo}'")
         return apresenta_topico(topico), 200
 
     except IntegrityError as e:
         # a duplicidade do titulo é a provável razão do IntegrityError
         error_msg = "Tópico de mesmo título já existe!"
-        logger.warning(f"Erro ao adicionar tópico '{topico.titulo}', {error_msg}")
         return {"message": error_msg}, 409
 
     except Exception as e:
         # caso um erro fora do previsto
         error_msg = "Não foi possível salvar novo tópico"
-        logger.warning(f"Erro ao adicionar tópico '{topico.titulo}', {error_msg}")
         return {"message": error_msg}, 400
 
 
@@ -68,7 +62,6 @@ def get_topicos():
 
     Retorna uma representação da listagem de tópicos.
     """
-    logger.debug(f"Coletando tópicos ")
     # criando conexão com a base
     session = Session()
     # fazendo a busca
@@ -78,7 +71,6 @@ def get_topicos():
         # se não há topicos cadastrados
         return {"topicos": []}, 200
     else:
-        logger.debug(f"%d rodutos econtrados" % len(topicos))
         # retorna a representação de topico
         print(topicos)
         return apresenta_topicos(topicos), 200
@@ -92,7 +84,6 @@ def get_topico(query: TopicoBuscaSchema):
     Retorna uma representação dos tópicos e comentários associados.
     """
     topico_titulo = query.titulo
-    logger.debug(f"Coletando dados sobre topico #{topico_titulo}")
     # criando conexão com a base
     session = Session()
     # fazendo a busca
@@ -101,10 +92,8 @@ def get_topico(query: TopicoBuscaSchema):
     if not topico:
         # se o topico não foi encontrado
         error_msg = "Topico não encontrado na base :/"
-        logger.warning(f"Erro ao buscar topico '{topico_titulo}', {error_msg}")
         return {"message": error_msg}, 404
     else:
-        logger.debug(f"Topico encontrado: '{topico.titulo}'")
         # retorna a representação de topico
         return apresenta_topico(topico), 200
 
@@ -116,7 +105,6 @@ def add_comentario(form: ComentarioSchema):
     Retorna uma representação dos tópicos e comentários associados.
     """
     topico_id  = form.topico_id
-    logger.debug(f"Adicionando comentários ao topico #{topico_id}")
     # criando conexão com a base
     session = Session()
     # fazendo a busca pelo topico
@@ -125,7 +113,6 @@ def add_comentario(form: ComentarioSchema):
     if not topico:
         # se topico não encontrado
         error_msg = "Topico não encontrado na base :/"
-        logger.warning(f"Erro ao adicionar comentário ao topico '{topico_id}', {error_msg}")
         return {"message": error_msg}, 404
 
     # criando o comentário
@@ -136,8 +123,6 @@ def add_comentario(form: ComentarioSchema):
     # adicionando o comentário ao topico
     topico.adiciona_comentario(comentario)
     session.commit()
-
-    logger.debug(f"Adicionado comentário ao topico #{topico_id}")
 
     # retorna a representação de topico
     return apresenta_topico(topico), 200
