@@ -12,29 +12,34 @@ app = OpenAPI(__name__, info=info)
 CORS(app)
 
 # definindo tags
-home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
+home_tag = Tag(
+    name="Documentação",
+    description="Seleção de documentação: Swagger, Redoc ou RapiDoc",
+)
 topico_tag = Tag(name="Tópico", description="Adição ou visualização de tópicos na base")
-comentario_tag = Tag(name="Comentário", description="Adição de um comentário a um tópico cadastrado na base")
+comentario_tag = Tag(
+    name="Comentário",
+    description="Adição de um comentário a um tópico cadastrado na base",
+)
 
 
-@app.get('/', tags=[home_tag])
+@app.get("/", tags=[home_tag])
 def home():
-    """Redireciona para /openapi, tela que permite a escolha do estilo de documentação.
-    """
-    return redirect('/openapi')
+    """Redireciona para /openapi, tela que permite a escolha do estilo de documentação."""
+    return redirect("/openapi")
 
 
-@app.post('/topico', tags=[topico_tag],
-          responses={"200": TopicoViewSchema, "409": ErrorSchema, "400": ErrorSchema})
+@app.post(
+    "/topico",
+    tags=[topico_tag],
+    responses={"200": TopicoViewSchema, "409": ErrorSchema, "400": ErrorSchema},
+)
 def add_topico(form: TopicoSchema):
     """Adiciona um novo tópico à base de dados.
 
     Retorna uma representação dos tópicos e comentários associados.
     """
-    topico = Topico(
-        titulo=form.titulo,
-        texto=form.texto,
-        username=form.username)
+    topico = Topico(titulo=form.titulo, texto=form.texto, username=form.username)
     try:
         session = Session()
         session.add(topico)
@@ -53,8 +58,11 @@ def add_topico(form: TopicoSchema):
         return {"message": error_msg}, 400
 
 
-@app.get('/topicos', tags=[topico_tag],
-         responses={"200": ListagemTopicosSchema, "404": ErrorSchema})
+@app.get(
+    "/topicos",
+    tags=[topico_tag],
+    responses={"200": ListagemTopicosSchema, "404": ErrorSchema},
+)
 def get_topicos():
     """Faz a busca por todos os tópicos cadastrados.
 
@@ -71,8 +79,11 @@ def get_topicos():
         return apresenta_topicos(topicos), 200
 
 
-@app.get('/topico', tags=[topico_tag],
-         responses={"200": TopicoViewSchema, "404": ErrorSchema})
+@app.get(
+    "/topico",
+    tags=[topico_tag],
+    responses={"200": TopicoViewSchema, "404": ErrorSchema},
+)
 def get_topico(query: TopicoBuscaSchema):
     """Faz a busca por um tópico a partir do título do tópico.
 
@@ -88,14 +99,18 @@ def get_topico(query: TopicoBuscaSchema):
     else:
         return apresenta_topico(topico), 200
 
-@app.post('/comentario', tags=[comentario_tag],
-          responses={"200": TopicoViewSchema, "404": ErrorSchema})
+
+@app.post(
+    "/comentario",
+    tags=[comentario_tag],
+    responses={"200": TopicoViewSchema, "404": ErrorSchema},
+)
 def add_comentario(form: ComentarioSchema):
     """Adiciona um novo comentário à um topicos cadastrado na base identificado pelo id
 
     Retorna uma representação dos tópicos e comentários associados.
     """
-    topico_id  = form.topico_id
+    topico_id = form.topico_id
     session = Session()
     topico = session.query(Topico).filter(Topico.id == topico_id).first()
 

@@ -3,11 +3,11 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from typing import Union
 
-from  model import Base, Comentario
+from model import Base, Comentario
 
 
 class Topico(Base):
-    __tablename__ = 'topico'
+    __tablename__ = "topico"
 
     id = Column("pk_topico", Integer, primary_key=True)
     titulo = Column(String(150), unique=True)
@@ -18,8 +18,13 @@ class Topico(Base):
     # Definição do relacionamento entre o topico e seus comentários.
     comentarios = relationship("Comentario")
 
-    def __init__(self, titulo:str, texto:str, username:str,
-                 data_insercao:Union[DateTime, None] = None):
+    def __init__(
+        self,
+        titulo: str,
+        texto: str,
+        username: str,
+        data_insercao: Union[DateTime, None] = None,
+    ):
         """
         Cria um tópico
 
@@ -36,7 +41,6 @@ class Topico(Base):
         if data_insercao:
             self.data_insercao = data_insercao
 
-    def adiciona_comentario(self, comentario:Comentario):
-        """ Adiciona um novo comentário ao tópico
-        """
+    def adiciona_comentario(self, comentario: Comentario):
+        """Adiciona um novo comentário ao tópico"""
         self.comentarios.append(comentario)
