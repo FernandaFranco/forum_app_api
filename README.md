@@ -4,8 +4,8 @@ Uma simples aplicação de fórum de discussões implementado em Flask!
 
 ## Pré-requisitos
 
-python (3.10.18)
-pip (23.0.1)
+* python (3.10.18)
+* pip (23.0.1)
 
 ## Como executar
 
