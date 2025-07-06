@@ -1,6 +1,6 @@
 # Discuta!
 
-Um simples Discussion Forum app implementado em Flask. Parte do MVP da Sprint de Full-Stack Básico da Pós em Eng de Software da PUC-Rio 2025.
+Um simples Discussion Forum app implementado em Flask!
 
 ## Como executar
 
