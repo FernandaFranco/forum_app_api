@@ -1,24 +1,28 @@
 import os
-from sqlalchemy_utils import database_exists, create_database
-from sqlalchemy.orm import sessionmaker
+
 from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy_utils import create_database, database_exists
+
+# Importando configurações
+from config import Config
 
 # importando os elementos definidos no modelo
 from model.base import Base
 from model.comentario import Comentario
 from model.topico import Topico
 
-db_path = "database/"
 # Cria a pasta database se não existir
-if not os.path.exists(db_path):
-    os.makedirs(db_path)
+if not os.path.exists(Config.DB_PATH):
+    os.makedirs(Config.DB_PATH)
 
-db_url = "sqlite:///%s/db.sqlite3" % db_path
-
-engine = create_engine(db_url, echo=False)
+engine = create_engine(
+    Config.DB_URL, echo=False, connect_args=Config.SQLITE_CONNECT_ARGS
+)
 
 # Instancia um criador de seção com o banco
-Session = sessionmaker(bind=engine)
+session_factory = sessionmaker(bind=engine)
+Session = scoped_session(session_factory)
 
 # Cria o banco se não existir
 if not database_exists(engine.url):

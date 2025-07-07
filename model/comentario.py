@@ -1,6 +1,7 @@
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
 from datetime import datetime
 from typing import Union
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
 from model import Base
 

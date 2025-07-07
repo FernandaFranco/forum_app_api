@@ -1,8 +1,10 @@
 # Cache
 __pycache__/
 
-# Environment
-.venv 
+# Environments
+.venv
+venv/
+venv.bak/
 
 # Stuff created at runtime
 database/

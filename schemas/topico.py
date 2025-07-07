@@ -1,7 +1,8 @@
 from typing import List
-from pydantic import BaseModel
-from model.topico import Topico
 
+from pydantic import BaseModel
+
+from model.topico import Topico
 from schemas import ComentarioSchema
 
 

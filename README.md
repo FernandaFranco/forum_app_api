@@ -4,8 +4,8 @@ Uma simples aplicação de fórum de discussões implementado em Flask!
 
 ## Pré-requisitos
 
-* python (3.10.18)
-* pip (23.0.1)
+- python (3.10.18)
+- pip (23.0.1)
 
 ## Como executar
 
@@ -14,7 +14,7 @@ Após clonar o repositório, criar e ativar um ambiente virtual para o projeto:
 ```console
 # exemplo em bash/zsh
 python -m venv .venv
-source .venv/bin/activate 
+source .venv/bin/activate
 ```
 
 Instalar as dependências descritas no arquivo requirements.txt:

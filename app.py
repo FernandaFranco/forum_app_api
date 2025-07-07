@@ -1,16 +1,17 @@
-from flask_openapi3 import OpenAPI, Info, Tag
 from flask import redirect
-
+from flask_cors import CORS
+from flask_openapi3 import Info, OpenAPI, Tag
 from sqlalchemy.exc import IntegrityError
 
-from flask_cors import CORS
-
-from model import Session, Topico, Comentario
+from config import Config
+from model import Comentario, Session, Topico
 from schemas import *
 
 info = Info(title="Discuta! API", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
+
+Config.init_app(app)
 
 # definindo tags
 home_tag = Tag(
@@ -22,6 +23,12 @@ comentario_tag = Tag(
     name="Comentário",
     description="Adição de um comentário a um tópico cadastrado na base",
 )
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    """Remove a sessão ao final de cada requisição"""
+    Session.remove()
 
 
 @app.get("/", tags=[home_tag])
@@ -41,8 +48,8 @@ def add_topico(form: TopicoSchema):
     Retorna uma representação dos tópicos e comentários associados.
     """
     topico = Topico(titulo=form.titulo, texto=form.texto, username=form.username)
+    session = Session()
     try:
-        session = Session()
         session.add(topico)
         session.commit()
 
@@ -57,6 +64,8 @@ def add_topico(form: TopicoSchema):
         # Caso um erro fora do previsto
         error_msg = "Não foi possível salvar novo tópico!"
         return {"message": error_msg}, 400
+    finally:
+        session.close()
 
 
 @app.get(
@@ -71,13 +80,15 @@ def get_topicos():
     """
 
     session = Session()
-    topicos = session.query(Topico).all()
+    try:
+        topicos = session.query(Topico).all()
 
-    if not topicos:
-        return {"topicos": []}, 200
-    else:
-        print(topicos)
-        return apresenta_topicos(topicos), 200
+        if not topicos:
+            return {"topicos": []}, 200
+        else:
+            return apresenta_topicos(topicos), 200
+    finally:
+        session.close()
 
 
 @app.get(
@@ -92,13 +103,16 @@ def get_topico(query: TopicoBuscaSchema):
     """
     topico_titulo = query.titulo
     session = Session()
-    topico = session.query(Topico).filter(Topico.titulo == topico_titulo).first()
+    try:
+        topico = session.query(Topico).filter(Topico.titulo == topico_titulo).first()
 
-    if not topico:
-        error_msg = "Tópico não encontrado na base!"
-        return {"message": error_msg}, 404
-    else:
-        return apresenta_topico(topico), 200
+        if not topico:
+            error_msg = "Tópico não encontrado na base!"
+            return {"message": error_msg}, 404
+        else:
+            return apresenta_topico(topico), 200
+    finally:
+        session.close()
 
 
 @app.post(
@@ -113,20 +127,23 @@ def add_comentario(form: ComentarioSchema):
     """
     topico_id = form.topico_id
     session = Session()
-    topico = session.query(Topico).filter(Topico.id == topico_id).first()
+    try:
+        topico = session.query(Topico).filter(Topico.id == topico_id).first()
 
-    if not topico:
-        error_msg = "Tópico não encontrado na base!"
-        return {"message": error_msg}, 404
+        if not topico:
+            error_msg = "Tópico não encontrado na base!"
+            return {"message": error_msg}, 404
 
-    # criando o comentário
-    texto = form.texto
-    username = form.username
-    comentario = Comentario(texto, username)
+        # criando o comentário
+        texto = form.texto
+        username = form.username
+        comentario = Comentario(texto, username)
 
-    # adicionando o comentário ao topico
-    topico.adiciona_comentario(comentario)
-    session.commit()
+        # adicionando o comentário ao topico
+        topico.adiciona_comentario(comentario)
+        session.commit()
 
-    # retorna a representação de topico
-    return apresenta_topico(topico), 200
+        # retorna a representação de topico
+        return apresenta_topico(topico), 200
+    finally:
+        session.close()
